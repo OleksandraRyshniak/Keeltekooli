@@ -1,0 +1,50 @@
+﻿@model Keeltekooli.Models.Keelekursus
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Keelekursus</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Nimetus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nimetus)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Keel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Keel)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tase)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Tase)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Kirjeldus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Kirjeldus)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

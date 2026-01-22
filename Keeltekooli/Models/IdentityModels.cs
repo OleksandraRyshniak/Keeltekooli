@@ -25,6 +25,11 @@ namespace Keeltekooli.Models
         {
         }
 
+        public DbSet<Keelekursus> Keelekursus { get; set; }
+        public DbSet<Opetaja> Opetaja { get; set; }
+        public  DbSet<Koolitus> Koolitus { get; set; }
+        public DbSet<Registreerimine> Registreerimine { get; set; }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
