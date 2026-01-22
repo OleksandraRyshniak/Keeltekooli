@@ -22,8 +22,7 @@ namespace Keeltekooli.Migrations
         {
             var roleStore = new RoleStore<IdentityRole>(context);
             var roleManager = new RoleManager<IdentityRole>(roleStore);
-            var userStore = new UserStore<ApplicationUser>(context);
-            var userManager = new UserManager<ApplicationUser>(userStore);
+           
             
             string[] roles = { "Admin", "Opetja", "Opilane" };
 
@@ -34,6 +33,10 @@ namespace Keeltekooli.Migrations
                     roleManager.Create(new IdentityRole(roleName));
                 }
             }
+            context.SaveChanges();
+
+            var userStore = new UserStore<ApplicationUser>(context);
+            var userManager = new UserManager<ApplicationUser>(userStore);
 
             // admin
             string adminEmail = "alexaryshniak@gmail.com";
@@ -82,8 +85,8 @@ namespace Keeltekooli.Migrations
                 {
                     Nimi = "Mari Maasikas",
                     Kvalifikatsioon = "Magister, Saksa keel",
-                    ApplicationUserId = opetajaUser.Id,
-                    FotoPath = "mari.jpg"
+                    FotoPath = "mari.jpg",
+                    ApplicationUserId = opetajaUser.Id
                 });
             }
 

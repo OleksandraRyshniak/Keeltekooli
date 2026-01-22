@@ -10,108 +10,109 @@ using Keeltekooli.Models;
 
 namespace Keeltekooli.Controllers
 {
-    
-    public class KeelekursusController : Controller
+    [Authorize(Roles = "Admin")]
+    public class OpetajasController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Keelekursus
+        // GET: Opetajas
+
         public ActionResult Index()
         {
-            return View(db.Keelekursus.ToList());
+            return View(db.Opetaja.ToList());
         }
 
-        // GET: Keelekursus/Details/5
+        // GET: Opetajas/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Keelekursus keelekursus = db.Keelekursus.Find(id);
-            if (keelekursus == null)
+            Opetaja opetaja = db.Opetaja.Find(id);
+            if (opetaja == null)
             {
                 return HttpNotFound();
             }
-            return View(keelekursus);
+            return View(opetaja);
         }
 
-        // GET: Keelekursus/Create
+        // GET: Opetajas/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Keelekursus/Create
+        // POST: Opetajas/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Nimetus,Keel,Tase,Kirjeldus")] Keelekursus keelekursus)
+        public ActionResult Create([Bind(Include = "Id,Nimi,Kvalifikatsioon,FotoPath,ApplicationUserId")] Opetaja opetaja)
         {
             if (ModelState.IsValid)
             {
-                db.Keelekursus.Add(keelekursus);
+                db.Opetaja.Add(opetaja);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(keelekursus);
+            return View(opetaja);
         }
 
-        // GET: Keelekursus/Edit/5
+        // GET: Opetajas/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Keelekursus keelekursus = db.Keelekursus.Find(id);
-            if (keelekursus == null)
+            Opetaja opetaja = db.Opetaja.Find(id);
+            if (opetaja == null)
             {
                 return HttpNotFound();
             }
-            return View(keelekursus);
+            return View(opetaja);
         }
 
-        // POST: Keelekursus/Edit/5
+        // POST: Opetajas/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Nimetus,Keel,Tase,Kirjeldus")] Keelekursus keelekursus)
+        public ActionResult Edit([Bind(Include = "Id,Nimi,Kvalifikatsioon,FotoPath,ApplicationUserId")] Opetaja opetaja)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(keelekursus).State = EntityState.Modified;
+                db.Entry(opetaja).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(keelekursus);
+            return View(opetaja);
         }
 
-        // GET: Keelekursus/Delete/5
+        // GET: Opetajas/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Keelekursus keelekursus = db.Keelekursus.Find(id);
-            if (keelekursus == null)
+            Opetaja opetaja = db.Opetaja.Find(id);
+            if (opetaja == null)
             {
                 return HttpNotFound();
             }
-            return View(keelekursus);
+            return View(opetaja);
         }
 
-        // POST: Keelekursus/Delete/5
+        // POST: Opetajas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Keelekursus keelekursus = db.Keelekursus.Find(id);
-            db.Keelekursus.Remove(keelekursus);
+            Opetaja opetaja = db.Opetaja.Find(id);
+            db.Opetaja.Remove(opetaja);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

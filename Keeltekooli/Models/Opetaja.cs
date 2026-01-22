@@ -18,6 +18,6 @@ namespace Keeltekooli.Models
 
         // SEOSTAMINE: See väli seob sisselogimise konto ja õpetaja profiili
         public string ApplicationUserId { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        //public virtual ApplicationUser User { get; set; }
     }
 }

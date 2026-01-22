@@ -171,13 +171,19 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KeelekursusController.cs" />
+    <Compile Include="Controllers\KoolitusController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\OpetajasController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202601220849354_InitKoolModels.cs" />
     <Compile Include="Migrations\202601220849354_InitKoolModels.Designer.cs">
       <DependentUpon>202601220849354_InitKoolModels.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601220926155_UpdateDB.cs" />
+    <Compile Include="Migrations\202601220926155_UpdateDB.Designer.cs">
+      <DependentUpon>202601220926155_UpdateDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -187,6 +193,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Opetaja.cs" />
     <Compile Include="Models\Registreerimine.cs" />
+    <Compile Include="Models\RegistreeriminesController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -266,6 +273,21 @@
     <Content Include="Views\Keelekursus\Details.cshtml" />
     <Content Include="Views\Keelekursus\Edit.cshtml" />
     <Content Include="Views\Keelekursus\Index.cshtml" />
+    <Content Include="Views\Opetajas\Create.cshtml" />
+    <Content Include="Views\Opetajas\Delete.cshtml" />
+    <Content Include="Views\Opetajas\Details.cshtml" />
+    <Content Include="Views\Opetajas\Edit.cshtml" />
+    <Content Include="Views\Opetajas\Index.cshtml" />
+    <Content Include="Views\Koolitus\Create.cshtml" />
+    <Content Include="Views\Koolitus\Delete.cshtml" />
+    <Content Include="Views\Koolitus\Details.cshtml" />
+    <Content Include="Views\Koolitus\Edit.cshtml" />
+    <Content Include="Views\Koolitus\Index.cshtml" />
+    <Content Include="Views\Registreerimines\Create.cshtml" />
+    <Content Include="Views\Registreerimines\Delete.cshtml" />
+    <Content Include="Views\Registreerimines\Details.cshtml" />
+    <Content Include="Views\Registreerimines\Edit.cshtml" />
+    <Content Include="Views\Registreerimines\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -300,6 +322,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202601220849354_InitKoolModels.resx">
       <DependentUpon>202601220849354_InitKoolModels.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601220926155_UpdateDB.resx">
+      <DependentUpon>202601220926155_UpdateDB.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

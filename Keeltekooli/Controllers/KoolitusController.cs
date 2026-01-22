@@ -10,108 +10,116 @@ using Keeltekooli.Models;
 
 namespace Keeltekooli.Controllers
 {
-    
-    public class KeelekursusController : Controller
+    public class KoolitusController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Keelekursus
+        // GET: Koolitus
         public ActionResult Index()
         {
-            return View(db.Keelekursus.ToList());
+            var koolitus = db.Koolitus.Include(k => k.Keelekursus).Include(k => k.Opetaja);
+            return View(koolitus.ToList());
         }
 
-        // GET: Keelekursus/Details/5
+        // GET: Koolitus/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Keelekursus keelekursus = db.Keelekursus.Find(id);
-            if (keelekursus == null)
+            Koolitus koolitus = db.Koolitus.Find(id);
+            if (koolitus == null)
             {
                 return HttpNotFound();
             }
-            return View(keelekursus);
+            return View(koolitus);
         }
 
-        // GET: Keelekursus/Create
+        // GET: Koolitus/Create
         public ActionResult Create()
         {
+            ViewBag.KeelekursusId = new SelectList(db.Keelekursus, "Id", "Nimetus");
+            ViewBag.OpetajaId = new SelectList(db.Opetaja, "Id", "Nimi");
             return View();
         }
 
-        // POST: Keelekursus/Create
+        // POST: Koolitus/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Nimetus,Keel,Tase,Kirjeldus")] Keelekursus keelekursus)
+        public ActionResult Create([Bind(Include = "Id,KeelekursusId,OpetajaId,AlgusKuupaev,LoppKuupaev,Hind,MaxOsalejaid")] Koolitus koolitus)
         {
             if (ModelState.IsValid)
             {
-                db.Keelekursus.Add(keelekursus);
+                db.Koolitus.Add(koolitus);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(keelekursus);
+            ViewBag.KeelekursusId = new SelectList(db.Keelekursus, "Id", "Nimetus", koolitus.KeelekursusId);
+            ViewBag.OpetajaId = new SelectList(db.Opetaja, "Id", "Nimi", koolitus.OpetajaId);
+            return View(koolitus);
         }
 
-        // GET: Keelekursus/Edit/5
+        // GET: Koolitus/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Keelekursus keelekursus = db.Keelekursus.Find(id);
-            if (keelekursus == null)
+            Koolitus koolitus = db.Koolitus.Find(id);
+            if (koolitus == null)
             {
                 return HttpNotFound();
             }
-            return View(keelekursus);
+            ViewBag.KeelekursusId = new SelectList(db.Keelekursus, "Id", "Nimetus", koolitus.KeelekursusId);
+            ViewBag.OpetajaId = new SelectList(db.Opetaja, "Id", "Nimi", koolitus.OpetajaId);
+            return View(koolitus);
         }
 
-        // POST: Keelekursus/Edit/5
+        // POST: Koolitus/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Nimetus,Keel,Tase,Kirjeldus")] Keelekursus keelekursus)
+        public ActionResult Edit([Bind(Include = "Id,KeelekursusId,OpetajaId,AlgusKuupaev,LoppKuupaev,Hind,MaxOsalejaid")] Koolitus koolitus)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(keelekursus).State = EntityState.Modified;
+                db.Entry(koolitus).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(keelekursus);
+            ViewBag.KeelekursusId = new SelectList(db.Keelekursus, "Id", "Nimetus", koolitus.KeelekursusId);
+            ViewBag.OpetajaId = new SelectList(db.Opetaja, "Id", "Nimi", koolitus.OpetajaId);
+            return View(koolitus);
         }
 
-        // GET: Keelekursus/Delete/5
+        // GET: Koolitus/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Keelekursus keelekursus = db.Keelekursus.Find(id);
-            if (keelekursus == null)
+            Koolitus koolitus = db.Koolitus.Find(id);
+            if (koolitus == null)
             {
                 return HttpNotFound();
             }
-            return View(keelekursus);
+            return View(koolitus);
         }
 
-        // POST: Keelekursus/Delete/5
+        // POST: Koolitus/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Keelekursus keelekursus = db.Keelekursus.Find(id);
-            db.Keelekursus.Remove(keelekursus);
+            Koolitus koolitus = db.Koolitus.Find(id);
+            db.Koolitus.Remove(koolitus);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

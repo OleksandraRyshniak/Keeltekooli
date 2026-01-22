@@ -1,0 +1,42 @@
+﻿@model Keeltekooli.Models.Registreerimine
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Registreerimine</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Koolitus.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Koolitus.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ApplicationUserId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ApplicationUserId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Staatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Staatus)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

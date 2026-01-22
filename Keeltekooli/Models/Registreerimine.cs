@@ -12,7 +12,7 @@ namespace Keeltekooli.Models
         public int KoolitusId { get; set;}
         public virtual Koolitus Koolitus { get; set; }
         public string ApplicationUserId { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        //public virtual ApplicationUser User { get; set; }
 
         public string Staatus { get; set; } 
     }
