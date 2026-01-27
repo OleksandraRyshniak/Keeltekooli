@@ -21,5 +21,7 @@ namespace Keeltekooli.Models
         public DateTime LoppKuupaev { get; set; } = DateTime.Now;
         public float Hind { get; set; }
         public int MaxOsalejaid { get; set; }
+
+        public virtual ICollection<Registreerimine> Registreerimised { get; set; }
     }
 }

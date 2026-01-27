@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Keeltekooli.Models.Koolitus>
+
+@{
+    ViewBag.Title = "Minu koolitus";
+}
+<tr>
+    <th>
+        @Html.DisplayNameFor(model => model.Keelekursus.Nimetus)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Opetaja.Nimi)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.AlgusKuupaev)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.LoppKuupaev)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Hind)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.MaxOsalejaid)
+    </th>
+    <th></th>
+</tr>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Keelekursus.Nimetus)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Opetaja.Nimi)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AlgusKuupaev)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LoppKuupaev)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Hind)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MaxOsalejaid)
+        </td>
+    </tr>
+}
+

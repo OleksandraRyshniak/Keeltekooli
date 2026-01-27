@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Keeltekooli.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -6,7 +9,6 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Keeltekooli.Models;
 
 namespace Keeltekooli.Controllers
 {
@@ -48,16 +50,52 @@ namespace Keeltekooli.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Nimi,Kvalifikatsioon,FotoPath,ApplicationUserId")] Opetaja opetaja)
+        public ActionResult Create(OpetajaViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var userStore = new UserStore<ApplicationUser>(db);
+            var userManager = new UserManager<ApplicationUser>(userStore);
+
+            // Проверка, есть ли уже такой email
+            if (userManager.FindByEmail(model.Email) != null)
             {
-                db.Opetaja.Add(opetaja);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                ModelState.AddModelError("", "Пользователь с таким email уже существует!");
+                return View(model);
             }
 
-            return View(opetaja);
+            // 1️⃣ Создаём пользователя Identity
+            var user = new ApplicationUser
+            {
+                UserName = model.Email,
+                Email = model.Email
+            };
+            var result = userManager.Create(user, model.Password);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError("", error);
+                return View(model);
+            }
+
+            // 2️⃣ Добавляем роль "Opetaja"
+            userManager.AddToRole(user.Id, "Opetaja");
+
+            // 3️⃣ Создаём профиль Opetaja
+            var opetaja = new Opetaja
+            {
+                Nimi = model.Nimi,
+                Kvalifikatsioon = model.Kvalifikatsioon,
+                FotoPath = model.FotoPath,
+                ApplicationUserId = user.Id
+            };
+
+            db.Opetaja.Add(opetaja);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
         // GET: Opetajas/Edit/5
@@ -124,6 +162,43 @@ namespace Keeltekooli.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public ActionResult minukoolitus_opetaja()
+        {
+            string userId = User.Identity.GetUserId();
+
+            // 1️⃣ Находим профиль учителя
+            var opetaja = db.Opetaja
+                .FirstOrDefault(o => o.ApplicationUserId == userId);
+
+            if (opetaja == null)
+                return HttpNotFound("Õpetaja profiili ei leitud");
+
+            // 2️⃣ Загружаем ТОЛЬКО ЕГО курсы / группы
+            var minuKoolitused = db.Koolitus
+                .Include(k => k.Keelekursus)
+                .Include(k => k.Registreerimised)
+                .Where(k => k.OpetajaId == opetaja.Id)
+                .ToList();
+
+            return View(minuKoolitused);
+        }
+
+        public ActionResult Details(int id)
+        {
+            string userId = User.Identity.GetUserId();
+
+            var koolitus = db.Koolitus
+                .Include(k => k.Keelekursus)
+                .Include(k => k.Registreerimised.Select(r => r.ApplicationUser))
+                .FirstOrDefault(k => k.Id == id &&
+                                     k.Opetaja.ApplicationUserId == userId);
+
+            if (koolitus == null)
+                return new HttpUnauthorizedResult();
+
+            return View(koolitus);
         }
     }
 }

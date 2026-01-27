@@ -7,14 +7,17 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Keeltekooli.Models;
+using Microsoft.AspNet.Identity;
 
 namespace Keeltekooli.Controllers
 {
+
     public class KoolitusController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Koolitus
+        [AllowAnonymous]
         public ActionResult Index()
         {
             var koolitus = db.Koolitus.Include(k => k.Keelekursus).Include(k => k.Opetaja);

@@ -24,7 +24,7 @@ namespace Keeltekooli.Migrations
             var roleManager = new RoleManager<IdentityRole>(roleStore);
            
             
-            string[] roles = { "Admin", "Opetja", "Opilane" };
+            string[] roles = { "Admin", "Opetaja", "Opilane" };
 
             foreach (var roleName in roles)
             {
@@ -40,7 +40,7 @@ namespace Keeltekooli.Migrations
 
             // admin
             string adminEmail = "alexaryshniak@gmail.com";
-            string adminPassword = "Parol123!";
+            string adminPassword = "Parool123!";
 
             var adminUser = userManager.FindByEmail(adminEmail);
             if (adminUser == null)

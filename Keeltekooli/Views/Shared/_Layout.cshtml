@@ -18,10 +18,18 @@
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
+
                     <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Keele kursus", "Index", "Keelekursus", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Õpetaja", "Index", "Opetajas", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
+                    @if (User.IsInRole("Opetaja"))
+                    { 
+
+                        <li>@Html.ActionLink("Koolitus", "minukoolitus_opetaja", "Koolitus", new { area = "" }, new { @class = "nav-link" })</li>
+
+                    }
                 </ul>
                  @Html.Partial("_LoginPartial")
             </div>
