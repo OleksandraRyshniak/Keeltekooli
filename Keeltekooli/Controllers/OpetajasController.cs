@@ -191,7 +191,7 @@ namespace Keeltekooli.Controllers
 
             var koolitus = db.Koolitus
                 .Include(k => k.Keelekursus)
-                .Include(k => k.Registreerimised.Select(r => r.ApplicationUser))
+                .Include(k => k.Registreerimised.Select(r => r.ApplicationUserId))
                 .FirstOrDefault(k => k.Id == id &&
                                      k.Opetaja.ApplicationUserId == userId);
 
