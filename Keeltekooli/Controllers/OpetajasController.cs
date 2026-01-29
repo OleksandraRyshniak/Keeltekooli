@@ -12,7 +12,7 @@ using System.Web.Mvc;
 
 namespace Keeltekooli.Controllers
 {
-    [Authorize(Roles = "Admin")]
+
     public class OpetajasController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -58,14 +58,12 @@ namespace Keeltekooli.Controllers
             var userStore = new UserStore<ApplicationUser>(db);
             var userManager = new UserManager<ApplicationUser>(userStore);
 
-            // Проверка, есть ли уже такой email
             if (userManager.FindByEmail(model.Email) != null)
             {
                 ModelState.AddModelError("", "Пользователь с таким email уже существует!");
                 return View(model);
             }
 
-            // 1️⃣ Создаём пользователя Identity
             var user = new ApplicationUser
             {
                 UserName = model.Email,
@@ -80,10 +78,8 @@ namespace Keeltekooli.Controllers
                 return View(model);
             }
 
-            // 2️⃣ Добавляем роль "Opetaja"
             userManager.AddToRole(user.Id, "Opetaja");
 
-            // 3️⃣ Создаём профиль Opetaja
             var opetaja = new Opetaja
             {
                 Nimi = model.Nimi,
@@ -164,7 +160,7 @@ namespace Keeltekooli.Controllers
             base.Dispose(disposing);
         }
 
-        public ActionResult minukoolitus_opetaja()
+        public ActionResult MinuKoolitused()
         {
             string userId = User.Identity.GetUserId();
 

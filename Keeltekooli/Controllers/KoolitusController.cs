@@ -18,9 +18,17 @@ namespace Keeltekooli.Controllers
 
         // GET: Koolitus
         [AllowAnonymous]
-        public ActionResult Index()
+        public ActionResult Index(int? keelekursusId)
         {
-            var koolitus = db.Koolitus.Include(k => k.Keelekursus).Include(k => k.Opetaja);
+            var koolitus = db.Koolitus
+                .Include(k => k.Keelekursus)
+                .Include(k => k.Opetaja);
+                if (keelekursusId != null)
+                {
+                koolitus = koolitus
+                    .Where(k => k.KeelekursusId == keelekursusId);
+                }
+
             return View(koolitus.ToList());
         }
 

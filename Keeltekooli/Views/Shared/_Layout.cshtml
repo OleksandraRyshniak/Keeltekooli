@@ -25,10 +25,12 @@
                     <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
 
                     @if (User.IsInRole("Opetaja"))
-                    { 
-
-                        <li>@Html.ActionLink("Koolitus", "minukoolitus_opetaja", "Koolitus", new { area = "" }, new { @class = "nav-link" })</li>
-
+                    {
+                        <li>@Html.ActionLink("Minu Koolitused", "MinuKoolitused", "Opetajas", new { area = "" }, new { @class = "nav-link" })</li>
+                    }
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li>@Html.ActionLink("Koolitused", "Index", "Koolitus", new { area = "" }, new { @class = "nav-link" })</li>
                     }
                 </ul>
                  @Html.Partial("_LoginPartial")
