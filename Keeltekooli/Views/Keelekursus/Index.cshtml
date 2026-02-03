@@ -5,7 +5,7 @@
 }
 
 <h2>Index</h2>
-@if (User.Identity.IsAuthenticated)
+@if (User.IsInRole("Admin"))
 {
 <p>
     @Html.ActionLink("Lisa Kursus", "Create")
@@ -17,17 +17,15 @@
             <td>@Html.DisplayFor(m => item.Nimetus)</td>
             <td>@Html.DisplayFor(m => item.Keel)</td>
             <td>@Html.DisplayFor(m => item.Tase)</td>
-            <td>@Html.DisplayFor(m => item.Kirjeldus)</td>
 
             <td>
-                @Html.ActionLink("Koolitused","Index", "Koolitus",new { keelekursusId = item.Id },null)
+                @Html.ActionLink("Details","Details", "Keelekursus", new { id = item.Id }, null)
             </td>
 
-            @if (User.Identity.IsAuthenticated)
+            @if (User.IsInRole("Admin"))
             {
                 <td>
                     @Html.ActionLink("Muuda", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
                     @Html.ActionLink("Delete", "Delete", new { id = item.Id })
                 </td>
             }

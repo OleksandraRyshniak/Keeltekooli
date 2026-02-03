@@ -45,6 +45,18 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @if (User.IsInRole("Opilane"))
+    {
+        @Html.ActionLink(
+            "Registreerimine",
+            "Create",
+            "Registreerimines",
+            new { id = Model.Id },
+            null
+        )
+    }
+    @if (User.IsInRole("Admin")) {
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id })}
+
     @Html.ActionLink("Back to List", "Index")
 </p>

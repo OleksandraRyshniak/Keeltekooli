@@ -4,8 +4,8 @@
     ViewBag.Title = "Koolitused";
 }
 
-<h2>Index</h2>
-@if (User.Identity.IsAuthenticated && User.IsInRole("Opilane"))
+<h2>@ViewBag.p</h2>
+@if (User.IsInRole("Admin"))
 {
     <p>
         @Html.ActionLink("Create New", "Create")
@@ -56,27 +56,13 @@
                 @Html.DisplayFor(modelItem => item.MaxOsalejaid)
             </td>
             <td>
-                @if (!User.Identity.IsAuthenticated)
+                @if (User.IsInRole("Opilane"))
                 {
-                    @Html.ActionLink(
-                        "Logi sisse registreerimiseks",
-                        "Login",
-                        "Account"
-                    )
-                }
-                else if (!User.IsInRole("Opilane"))
-                {
-                    @Html.ActionLink(
-                        "Registreerimine",
-                        "Create",
-                        "Registreerimines",
-                        new { id = item.Id },
-                        null
-                    )
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id })
                 }
             </td>
 
-            @if (User.Identity.IsAuthenticated && User.IsInRole("Opilane"))
+            @if (User.IsInRole("Admin"))
             {
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |

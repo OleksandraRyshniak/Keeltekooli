@@ -23,11 +23,24 @@ namespace Keeltekooli.Controllers
             var koolitus = db.Koolitus
                 .Include(k => k.Keelekursus)
                 .Include(k => k.Opetaja);
-                if (keelekursusId != null)
-                {
+
+            if (keelekursusId != null)
+            {
                 koolitus = koolitus
                     .Where(k => k.KeelekursusId == keelekursusId);
+
+                var keelekursus = db.Keelekursus
+                    .FirstOrDefault(k => k.Id == keelekursusId);
+
+                if (keelekursus != null)
+                {
+                   ViewBag.p = keelekursus.Nimetus +" Koolitused";
                 }
+            }
+            else
+            {
+                ViewBag.p = "Koolitused";
+            }
 
             return View(koolitus.ToList());
         }
@@ -55,9 +68,6 @@ namespace Keeltekooli.Controllers
             return View();
         }
 
-        // POST: Koolitus/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,KeelekursusId,OpetajaId,AlgusKuupaev,LoppKuupaev,Hind,MaxOsalejaid")] Koolitus koolitus)
