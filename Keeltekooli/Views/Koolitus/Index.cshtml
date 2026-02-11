@@ -58,7 +58,11 @@
             <td>
                 @if (User.IsInRole("Opilane"))
                 {
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                    @Html.ActionLink("Registreerimines", "Create","Registreerimines", null, new { @class = "btn btn-outline-dark" })
+                }
+                @if(!User.IsInRole("Admin") && !User.IsInRole("Opilane") && !User.IsInRole("Opetaja"))
+                {
+                    @Html.ActionLink("Registreerimines", "Login", "Account", new {id = item.Id}, new { @class = "btn btn-outline-dark" })
                 }
             </td>
 

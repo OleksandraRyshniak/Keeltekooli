@@ -22,6 +22,7 @@ namespace Keeltekooli.Controllers
         {
         }
 
+
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
@@ -66,7 +67,7 @@ namespace Keeltekooli.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl, int? koolitusID)
         {
             if (!ModelState.IsValid)
             {
@@ -79,7 +80,7 @@ namespace Keeltekooli.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToLocal(returnUrl, koolitusID);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -109,7 +110,7 @@ namespace Keeltekooli.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model)
+        public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model, int? koolitusID)
         {
             if (!ModelState.IsValid)
             {
@@ -124,7 +125,7 @@ namespace Keeltekooli.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(model.ReturnUrl);
+                    return RedirectToLocal(model.ReturnUrl, koolitusID);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.Failure:
@@ -315,7 +316,7 @@ namespace Keeltekooli.Controllers
         //
         // GET: /Account/ExternalLoginCallback
         [AllowAnonymous]
-        public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
+        public async Task<ActionResult> ExternalLoginCallback(string returnUrl,int? koolitusID)
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
@@ -324,11 +325,11 @@ namespace Keeltekooli.Controllers
             }
 
             // Sign in the user with this external login provider if the user already has a login
-            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            var result = await SignInManager.ExternalSignInAsync(loginInfo,  isPersistent : false);
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToLocal(returnUrl, koolitusID);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -347,7 +348,7 @@ namespace Keeltekooli.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
+        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl, int? koolitusID)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -370,7 +371,7 @@ namespace Keeltekooli.Controllers
                     if (result.Succeeded)
                     {
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                        return RedirectToLocal(returnUrl);
+                        return RedirectToLocal(returnUrl, koolitusID);
                     }
                 }
                 AddErrors(result);
@@ -438,12 +439,21 @@ namespace Keeltekooli.Controllers
             }
         }
 
-        private ActionResult RedirectToLocal(string returnUrl)
+        private ActionResult RedirectToLocal(string returnUrl, int? koolusId)
         {
-            if (Url.IsLocalUrl(returnUrl))
+            // Если есть ReturnUrl и это локальный URL → возвращаем туда
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
+
+            // Если keelekursusId передан → редирект на Koolitus/Index
+            if (koolusId.HasValue)
+            {
+                return RedirectToAction("Index", "Koolitus", new { keelekursusId = koolusId.Value });
+            }
+
+            // Иначе на главную
             return RedirectToAction("Index", "Home");
         }
 

@@ -17,7 +17,6 @@ namespace Keeltekooli.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Koolitus
-        [AllowAnonymous]
         public ActionResult Index(int? keelekursusId)
         {
             var koolitus = db.Koolitus

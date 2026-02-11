@@ -10,7 +10,6 @@ using Keeltekooli.Models;
 
 namespace Keeltekooli.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class KeelekursusController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
