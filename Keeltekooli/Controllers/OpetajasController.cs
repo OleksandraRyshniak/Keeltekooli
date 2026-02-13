@@ -21,7 +21,19 @@ namespace Keeltekooli.Controllers
 
         public ActionResult Index()
         {
-            return View(db.Opetaja.ToList());
+            var opetajad = db.Opetaja
+        .Select(o => new OpetajaViewModel
+        {
+            Id = o.Id,
+            Nimi = o.Nimi,
+            Kvalifikatsioon = o.Kvalifikatsioon,
+            FotoPath = o.FotoPath,
+            Email = o.User.Email,
+            Password = ""
+        })
+        .ToList();
+
+            return View(opetajad);
         }
 
         // GET: Opetajas/Details/5
@@ -60,7 +72,7 @@ namespace Keeltekooli.Controllers
 
             if (userManager.FindByEmail(model.Email) != null)
             {
-                ModelState.AddModelError("", "Пользователь с таким email уже существует!");
+                ModelState.AddModelError("", "Kasutaja selle e-posti aadressiga juba olemas!");
                 return View(model);
             }
 

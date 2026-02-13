@@ -6,23 +6,18 @@ using System.Web;
 
 namespace Keeltekooli.Models
 {
-    public class OpetajaViewModel
+    public class RegistreerimineViewModel
     {
         public int Id { get; set; }
 
+        public int KoolitusId { get; set; }
+        public virtual Koolitus Koolitus { get; set; }
+
         [Required]
         public string Nimi { get; set; }
-
-        public string Kvalifikatsioon { get; set; }
-
-        public string FotoPath { get; set; }
-
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-
-        [Required]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string Staatus { get; set; }
     }
 }
