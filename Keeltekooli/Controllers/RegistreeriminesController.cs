@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -41,19 +42,27 @@ namespace Keeltekooli.Models
         {
             var model = new RegistreerimineViewModel();
 
-            if (koolitusId.HasValue)
-            {
-                // Проверяем, что курс реально существует
-                var koolitus = db.Koolitus.Find(koolitusId.Value);
-                if (koolitus == null)
-                    return HttpNotFound();
+            // Находим курс по ID
+            var koolitus = db.Koolitus
+                .Include(k => k.Keelekursus)
+                .Include(k => k.Opetaja)
+                .FirstOrDefault(k => k.Id == koolitusId);
 
-                model.KoolitusId = koolitus.Id; // автоматически устанавливаем
-            }
+            var koolitus1 = db.Koolitus.Find(koolitusId);
 
-            ViewBag.KoolitusId = new SelectList(db.Koolitus, "Id", "Koolitus", model.KoolitusId);
+            if (koolitus == null)
+                return HttpNotFound();
+
+            // Устанавливаем курс в модель
+            model.KoolitusId = koolitus.Id;
+
+            // Передаём курс в View через ViewBag для отображения заголовка
+            ViewBag.Koolitus = koolitus;
+
             return View(model);
         }
+
+
 
         // POST: Registreerimines/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
@@ -64,28 +73,35 @@ namespace Keeltekooli.Models
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.KoolitusId = new SelectList(db.Koolitus, "Id", "Id", model.KoolitusId);
+                ViewBag.KoolitusId = new SelectList(db.Koolitus, "Id", "Nimi", model.KoolitusId);
                 return View(model);
             }
 
-            // Проверяем email пользователя
-            var user = db.Users.FirstOrDefault(u => u.Email == model.Email);
-            if (user == null)
-            {
-                ModelState.AddModelError("", "Kasutaja selle e-posti aadressiga juba olemas!");
-                ViewBag.KoolitusId = new SelectList(db.Koolitus, "Id", "Id", model.KoolitusId);
-                return View(model);
-            }
-
-            // Проверяем, что выбранный курс существует
-            if (model.KoolitusId == 0 || db.Koolitus.Find(model.KoolitusId) == null)
+            // Проверяем, что курс существует
+            var koolitus = db.Koolitus.Find(model.KoolitusId);
+            if (koolitus == null)
             {
                 ModelState.AddModelError("", "Valitud grupp ei eksisteeri!");
                 ViewBag.KoolitusId = new SelectList(db.Koolitus, "Id", "Nimi", model.KoolitusId);
                 return View(model);
             }
 
-            // Создаём сущность и сохраняем
+            // Проверяем пользователя
+            var user = db.Users.SingleOrDefault(u => u.Email == model.Email);
+
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email
+                };
+
+                db.Users.Add(user);
+                db.SaveChanges();
+            }
+
+            // Создаём регистрацию
             var registreerimine = new Registreerimine
             {
                 KoolitusId = model.KoolitusId,

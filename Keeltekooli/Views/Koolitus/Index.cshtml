@@ -58,7 +58,7 @@
             <td>
                 @if (User.IsInRole("Opilane"))
                 {
-                    @Html.ActionLink("Registreerimines", "Create","Registreerimines", null, new { @class = "btn btn-outline-dark" })
+                    @Html.ActionLink("Registreerimines", "Create","Registreerimines", new { koolitusId = item.Id }, new { @class = "btn btn-outline-dark" })
                 }
                 @if(!User.IsInRole("Admin") && !User.IsInRole("Opilane") && !User.IsInRole("Opetaja"))
                 {
