@@ -1,6 +1,7 @@
 ﻿using Keeltekooli.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -29,7 +30,6 @@ namespace Keeltekooli.Controllers
             Kvalifikatsioon = o.Kvalifikatsioon,
             FotoPath = o.FotoPath,
             Email = o.User.Email,
-            Password = ""
         })
         .ToList();
 
@@ -39,16 +39,25 @@ namespace Keeltekooli.Controllers
         // GET: Opetajas/Details/5
         public ActionResult Details(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Opetaja opetaja = db.Opetaja.Find(id);
-            if (opetaja == null)
-            {
-                return HttpNotFound();
-            }
-            return View(opetaja);
+    if (id == null)
+        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+    var opetaja = db.Opetaja
+        .Where(o => o.Id == id)
+        .Select(o => new OpetajaViewModel
+        {
+            Id = o.Id,
+            Nimi = o.Nimi,
+            Kvalifikatsioon = o.Kvalifikatsioon,
+            FotoPath = o.FotoPath,
+            Email = o.User.Email
+        })
+        .FirstOrDefault();
+
+    if (opetaja == null)
+        return HttpNotFound();
+
+    return View(opetaja);
         }
 
         // GET: Opetajas/Create
@@ -110,14 +119,23 @@ namespace Keeltekooli.Controllers
         public ActionResult Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Opetaja opetaja = db.Opetaja.Find(id);
+
+            var opetaja = db.Opetaja
+                .Where(o => o.Id == id)
+                .Select(o => new OpetajaViewModel
+                {
+                    Id = o.Id,
+                    Nimi = o.Nimi,
+                    Kvalifikatsioon = o.Kvalifikatsioon,
+                    FotoPath = o.FotoPath,
+                    Email = o.User.Email
+                })
+                .FirstOrDefault();
+
             if (opetaja == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(opetaja);
         }
 
@@ -126,16 +144,38 @@ namespace Keeltekooli.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Nimi,Kvalifikatsioon,FotoPath,ApplicationUserId")] Opetaja opetaja)
+        public ActionResult Edit(OpetajaViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            // находим Opetaja и связанного пользователя Identity
+            var opetaja = db.Opetaja.Include(o => o.User).FirstOrDefault(o => o.Id == model.Id);
+            if (opetaja == null)
+                return HttpNotFound();
+
+            // Обновляем поля Opetaja
+            opetaja.Nimi = model.Nimi;
+            opetaja.Kvalifikatsioon = model.Kvalifikatsioon;
+            opetaja.FotoPath = model.FotoPath;
+
+            // Обновляем Email пользователя
+            var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            opetaja.User.Email = model.Email;
+            opetaja.User.UserName = model.Email;
+
+            if (!string.IsNullOrEmpty(model.Password))
             {
-                db.Entry(opetaja).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                // Сброс пароля
+                var token = userManager.GeneratePasswordResetToken(opetaja.User.Id);
+                userManager.ResetPassword(opetaja.User.Id, token, model.Password);
             }
-            return View(opetaja);
+
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
+
 
         // GET: Opetajas/Delete/5
         public ActionResult Delete(int? id)
@@ -191,22 +231,6 @@ namespace Keeltekooli.Controllers
                 .ToList();
 
             return View(minuKoolitused);
-        }
-
-        public ActionResult Details(int id)
-        {
-            string userId = User.Identity.GetUserId();
-
-            var koolitus = db.Koolitus
-                .Include(k => k.Keelekursus)
-                .Include(k => k.Registreerimised.Select(r => r.ApplicationUserId))
-                .FirstOrDefault(k => k.Id == id &&
-                                     k.Opetaja.ApplicationUserId == userId);
-
-            if (koolitus == null)
-                return new HttpUnauthorizedResult();
-
-            return View(koolitus);
         }
     }
 }

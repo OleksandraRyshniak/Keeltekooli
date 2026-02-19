@@ -1,4 +1,5 @@
-﻿@model Keeltekooli.Models.Opetaja
+﻿@model Keeltekooli.Models.OpetajaViewModel
+
 
 @{
     ViewBag.Title = "Details";
@@ -34,12 +35,12 @@
             @Html.DisplayFor(model => model.FotoPath)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ApplicationUserId)
-        </dt>
 
+        <dt>
+            @Html.DisplayNameFor(model => model.Email) 
+        </dt>
         <dd>
-            @Html.DisplayFor(model => model.ApplicationUserId)
+            @Html.DisplayFor(model => model.Email)
         </dd>
 
     </dl>

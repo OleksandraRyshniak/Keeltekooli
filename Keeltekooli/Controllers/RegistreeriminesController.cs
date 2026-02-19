@@ -101,6 +101,18 @@ namespace Keeltekooli.Models
                 db.SaveChanges();
             }
 
+            // *** Проверяем, зарегистрирован ли пользователь уже на этот курс ***
+            bool alreadyRegistered = db.Registreerimine.Any(r =>
+                r.KoolitusId == model.KoolitusId &&
+                r.ApplicationUserId == user.Id);
+
+            if (alreadyRegistered)
+            {
+                ModelState.AddModelError("", "Sa oled juba registreeritud sellele kursusele.");
+                ViewBag.KoolitusId = new SelectList(db.Koolitus, "Id", "Nimi", model.KoolitusId);
+                return View(model);
+            }
+
             // Создаём регистрацию
             var registreerimine = new Registreerimine
             {
@@ -114,6 +126,7 @@ namespace Keeltekooli.Models
 
             return RedirectToAction("Index");
         }
+
 
 
         // GET: Registreerimines/Edit/5

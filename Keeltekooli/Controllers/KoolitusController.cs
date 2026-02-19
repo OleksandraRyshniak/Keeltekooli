@@ -71,6 +71,11 @@ namespace Keeltekooli.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,KeelekursusId,OpetajaId,AlgusKuupaev,LoppKuupaev,Hind,MaxOsalejaid")] Koolitus koolitus)
         {
+                if (koolitus.LoppKuupaev < koolitus.AlgusKuupaev)
+    {
+        ModelState.AddModelError("", "Lõppkuupäev ei tohi olla enne alguskuupäeva");
+    }
+
             if (ModelState.IsValid)
             {
                 db.Koolitus.Add(koolitus);
@@ -152,5 +157,24 @@ namespace Keeltekooli.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public ActionResult Minukool()
+        {
+            string userId = User.Identity.GetUserId();
+
+            var registreeringud = db.Registreerimine
+                .Where(r => r.ApplicationUserId == userId)
+                .Select(r => r.KoolitusId)
+                .ToList();
+
+            var minuKoolitused = db.Koolitus
+                .Include(k => k.Keelekursus)
+                .Include(k => k.Opetaja)
+                .Where(k => registreeringud.Contains(k.Id))
+                .ToList();
+
+            return View(minuKoolitused);
+        }
+
     }
 }

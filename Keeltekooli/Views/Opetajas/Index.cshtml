@@ -21,15 +21,7 @@
         <th>
             Foto
         </th>
-        @if (User.IsInRole("Admin"))
-        {
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th>
-        }
+
     </tr>
 
     @foreach (var item in Model)
