@@ -18,17 +18,20 @@
             <td>@Html.DisplayFor(m => item.Keel)</td>
             <td>@Html.DisplayFor(m => item.Tase)</td>
 
-            <td>
-                @Html.ActionLink("Details","Details", "Keelekursus", new { id = item.Id }, null)
-            </td>
 
-            @if (User.IsInRole("Admin"))
-            {
-                <td>
-                    @Html.ActionLink("Muuda", "Edit", new { id = item.Id }) |
+            <td>
+                @Html.ActionLink("Koolitused", "Index", "Koolitus",
+                    new { keelekursusId = item.Id },
+                    new { @class = "btn btn-outline-dark btn-sm" })
+
+                @if (User.IsInRole("Admin"))
+                {
+                    @: |
+                    @Html.ActionLink("Muuda", "Edit", new { id = item.Id })
+                    @: |
                     @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
-            }
+                }
+            </td>
         </tr>
     }
 </table>

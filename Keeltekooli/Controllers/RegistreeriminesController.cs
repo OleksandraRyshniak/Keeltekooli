@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace Keeltekooli.Models
@@ -55,6 +57,9 @@ namespace Keeltekooli.Models
 
             // Устанавливаем курс в модель
             model.KoolitusId = koolitus.Id;
+
+            // Заполняем email текущего пользователя (если авторизован)
+            model.Email = User.Identity.GetUserName();
 
             // Передаём курс в View через ViewBag для отображения заголовка
             ViewBag.Koolitus = koolitus;

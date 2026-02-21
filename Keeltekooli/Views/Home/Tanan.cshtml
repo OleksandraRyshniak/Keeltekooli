@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Tänan!";
+}
+
+<div class="card shadow p-4 text-center">
+    <h2 class="text-success">Aitäh registreerimise eest!</h2>
+
+    <p>
+        Sa oled edukalt registreeritud kursusele
+        <strong>@ViewBag.Kursus</strong>.
+    </p>
+
+    <a href="@Url.Action("Index","Home")"
+       class="btn btn-primary mt-3">
+        Tagasi avalehele
+    </a>
+</div>
