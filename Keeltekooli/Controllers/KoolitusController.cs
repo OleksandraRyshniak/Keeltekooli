@@ -22,7 +22,10 @@ namespace Keeltekooli.Controllers
         {
             var koolitus = db.Koolitus
                 .Include(k => k.Keelekursus)
-                .Include(k => k.Opetaja);
+                .Include(k => k.Opetaja)
+                .Where(k =>
+                    db.Registreerimine.Count(r => r.KoolitusId == k.Id)
+                    < k.MaxOsalejaid);
 
             if (keelekursusId != null)
             {
@@ -34,7 +37,7 @@ namespace Keeltekooli.Controllers
 
                 if (keelekursus != null)
                 {
-                   ViewBag.p = keelekursus.Nimetus +" Koolitused";
+                    ViewBag.p = keelekursus.Nimetus + " Koolitused";
                 }
             }
             else
@@ -212,43 +215,11 @@ namespace Keeltekooli.Controllers
     db.SaveChanges();
 
     var user = db.Users.Find(userId);
-    SaadaEmail(user?.Email, user?.UserName, koolitus.Keelekursus?.Nimetus ?? "kursus");
+    
 
     return RedirectToAction("Tanan", "Home", new { id = reg.Id });
 }
 
-        private void SaadaEmail(string email, string nimi, string kursus)
-        {
-            try
-            {
-                WebMail.SmtpServer = "smtp.gmail.com";
-                WebMail.SmtpPort = 587;
-                WebMail.EnableSsl = true;
-                WebMail.UserName = "YOUR_EMAIL@gmail.com";
-                WebMail.Password = "YOUR_APP_PASSWORD";
-                WebMail.From = "YOUR_EMAIL@gmail.com";
-
-                string sisu = $@"
-            Tere, {nimi}!<br/><br/>
-            Sa registreerisid edukalt kursusele 
-            <b>{kursus}</b>.<br/><br/>
-            Ootame sind väga!<br/><br/>
-            Parimate soovidega,<br/>
-            Keeltekool
-        ";
-
-                WebMail.Send(
-                    to: email,
-                    subject: "Kinnituskiri kursusele: " + kursus,
-                    body: sisu,
-                    isBodyHtml: true
-                );
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("E-maili viga: " + ex.Message);
-            }
-        }
-
+       
     }
 }

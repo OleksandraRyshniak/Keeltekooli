@@ -322,7 +322,7 @@
     <Content Include="Views\Registreerimines\Index.cshtml" />
     <Content Include="Views\Opetajas\MinuKoolitused.cshtml" />
     <Content Include="Views\Koolitus\Minukool.cshtml" />
-    <Content Include="Views\Home\Tanan.cshtml" />
+    <Content Include="Views\Registreerimines\Tanan.cshtml" />
     <Content Include="Views\Koolitus\Registreeru.cshtml" />
   </ItemGroup>
   <ItemGroup>

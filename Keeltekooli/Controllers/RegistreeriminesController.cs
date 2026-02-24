@@ -20,8 +20,23 @@ namespace Keeltekooli.Models
         // GET: Registreerimines
         public ActionResult Index()
         {
-            var registreerimine = db.Registreerimine.Include(r => r.Koolitus);
-            return View(registreerimine.ToList());
+
+            var registreerimised = db.Registreerimine
+                .Include(r => r.Koolitus.Keelekursus)
+                .Include(r => r.User)
+                .Where(r => r.Staatus == "Vaatamisel")   
+                .Select(r => new RegistreerimineViewModel
+                {
+                    Id = r.Id,
+                    KoolitusId = r.KoolitusId,
+                    Koolitus = r.Koolitus,
+                    Nimi = r.User.UserName,
+                    Email = r.User.Email,
+                    Staatus = r.Staatus,
+                })
+                .ToList();
+
+            return View(registreerimised);
         }
 
         // GET: Registreerimines/Details/5
@@ -79,6 +94,12 @@ namespace Keeltekooli.Models
             if (!ModelState.IsValid)
             {
                 ViewBag.KoolitusId = new SelectList(db.Koolitus, "Id", "Nimi", model.KoolitusId);
+                // Внутри POST Create при возврате View(model) добавьте:
+                var koolitus1 = db.Koolitus
+                    .Include(k => k.Keelekursus)
+                    .Include(k => k.Opetaja)
+                    .FirstOrDefault(k => k.Id == model.KoolitusId);
+                ViewBag.Koolitus = koolitus1;
                 return View(model);
             }
 
@@ -129,7 +150,9 @@ namespace Keeltekooli.Models
             db.Registreerimine.Add(registreerimine);
             db.SaveChanges();
 
-            return RedirectToAction("Index");
+            SaadaEmail(user, koolitus, true); // true — подтверждение участия
+
+            return RedirectToAction("Tanan" , new { id = registreerimine.Id });
         }
 
 
@@ -200,6 +223,122 @@ namespace Keeltekooli.Models
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public ActionResult Tanan(int? id)
+        {
+            if (id == null)
+                return RedirectToAction("Index");
+
+            var reg = db.Registreerimine
+                        .Include(r => r.Koolitus.Keelekursus)
+                        .Include(r => r.Koolitus.Opetaja)
+                        .FirstOrDefault(r => r.Id == id);
+
+            if (reg == null)
+                return RedirectToAction("Index");
+
+            ViewBag.Keelekursus = reg.Koolitus.Keelekursus?.Nimetus ?? "–";
+            ViewBag.Opetaja = reg.Koolitus.Opetaja?.Nimi ?? "–";
+            ViewBag.Staatus = reg.Staatus;
+
+            return View(reg);
+        }
+        //https://myaccount.google.com/apppasswords
+
+        private void SaadaEmail(ApplicationUser user, Koolitus koolitus, bool onkutse)
+        {
+            try
+            {
+                //string failiTee = Path.Combine(Server.MapPath("~/Images/"), koolitus.Pilt ?? "default.jpg");
+
+                WebMail.SmtpServer = "smtp.gmail.com";
+                WebMail.SmtpPort = 587;
+                WebMail.EnableSsl = true;
+                WebMail.UserName = "oleksandraryshniak@gmail.com";
+                WebMail.Password = "";
+                WebMail.From = "oleksandraryshniak@gmail.com";
+
+                string sisu = onkutse
+                    ? $"Tere, {user.UserName}!<br/><br/>Sinu registreerumine kursusele <b>{koolitus.Keelekursus.Nimetus}</b> on salvestatud. Ootame sind väga!<br/><br/>Kohtumiseni!"
+                    : $"Tere, {user.UserName}!<br/><br/>Sinu registreerumine kursusele <b>{koolitus.Keelekursus.Nimetus}</b> on salvestatud. Kahju, et sa ei tule!<br/><br/>Kõike head!";
+
+                WebMail.Send(
+                    to: user.Email,
+                    subject: $"Kinnitus registreerumisest kursusele {koolitus.Keelekursus}",
+                    body: sisu,
+                    isBodyHtml: true
+                  //  filesToAttach: new string[] { failiTee }
+                );
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("E-maili saatmise viga: " + ex.Message);
+            }
+        }
+
+        private void SaadaEmail_ok(ApplicationUser user, Koolitus koolitus, bool onkutse)
+        {
+            try
+            {
+                //string failiTee = Path.Combine(Server.MapPath("~/Images/"), koolitus.Pilt ?? "default.jpg");
+
+                WebMail.SmtpServer = "smtp.gmail.com";
+                WebMail.SmtpPort = 587;
+                WebMail.EnableSsl = true;
+                WebMail.UserName = "oleksandraryshniak@gmail.com";
+                WebMail.Password = "";
+                WebMail.From = "oleksandraryshniak@gmail.com";
+
+                string sisu = onkutse
+                    ? $"Tere, {user.UserName}!<br/><br/>Sinu registreerumine kursusele <b>{koolitus.Keelekursus.Nimetus}</b> on salvestatud. Ootame sind väga!<br/><br/>Kohtumiseni!"
+                    : $"Tere, {user.UserName}!<br/><br/>Sinu registreerumine kursusele <b>{koolitus.Keelekursus.Nimetus}</b> on salvestatud. Kahju, et sa ei tule!<br/><br/>Kõike head!";
+
+                WebMail.Send(
+                    to: user.Email,
+                    subject: $"Kinnitus registreerumisest kursusele {koolitus.Keelekursus}",
+                    body: sisu,
+                    isBodyHtml: true
+                //  filesToAttach: new string[] { failiTee }
+                );
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("E-maili saatmise viga: " + ex.Message);
+            }
+        }
+
+        public ActionResult VahetaStaatus(int id)
+        {
+            var registreerimine = db.Registreerimine.Find(id);
+            if (registreerimine == null)
+                return HttpNotFound();
+
+            var koolitus = db.Koolitus.Find(registreerimine.KoolitusId);
+            if (koolitus == null)
+            {
+                ModelState.AddModelError("", "Valitud grupp ei eksisteeri!");
+                ViewBag.KoolitusId = new SelectList(db.Koolitus, "Id", "Nimi", registreerimine.KoolitusId);
+                return View(registreerimine);
+            }
+
+            // Проверяем пользователя
+            var user = db.Users.SingleOrDefault(u => u.Id == registreerimine.ApplicationUserId);
+
+            if (user == null)
+            {
+                // Если пользователь не найден, можно обработать ошибку или создать нового пользователя
+                ModelState.AddModelError("", "Kasutajat ei leitud!");
+                return View(registreerimine);
+            }
+
+            // Логика смены статуса
+            if (registreerimine.Staatus == "Vaatamisel")
+                registreerimine.Staatus = "Kinnitatud";
+            SaadaEmail_ok(user, koolitus, true);
+            db.SaveChanges();
+
+            return RedirectToAction("Index"); 
         }
     }
 }

@@ -32,22 +32,5 @@ namespace Keeltekooli.Controllers
 
             return View();
         }
-
-        public ActionResult Tanan(int? id)
-        {
-            if (id == null)
-                return RedirectToAction("Index");
-
-            var reg = db.Registreerimine
-                        .Include(r => r.Koolitus)
-                        .FirstOrDefault(r => r.Id == id);
-
-            if (reg == null)
-                return RedirectToAction("Index");
-
-            ViewBag.Kursus = reg.Koolitus.Keelekursus.Nimetus;
-
-            return View();
-        }
     } 
 }

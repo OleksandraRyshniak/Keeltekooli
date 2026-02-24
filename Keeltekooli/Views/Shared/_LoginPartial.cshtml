@@ -2,7 +2,7 @@
 
 @if (User.IsInRole("Admin"))
     {
-        <li>@Html.ActionLink("📩", null)</li>
+        <li>@Html.ActionLink("📩", "Index", "Registreerimines")</li>
     }
 
 @if (Request.IsAuthenticated)

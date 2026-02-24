@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Keeltekooli.Models.Registreerimine>
+﻿@model IEnumerable<Keeltekooli.Models.RegistreerimineViewModel>
 
 @{
     ViewBag.Title = "Index";
@@ -6,21 +6,21 @@
 
 <h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.Koolitus.Id)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ApplicationUserId)
+            Kursus
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Staatus)
+            Nimi
         </th>
-        <th></th>
+        <th>
+            Email
+        </th>
+        <th>Status</th>
     </tr>
 
 @foreach (var item in Model) {
@@ -29,15 +29,24 @@
             @Html.DisplayFor(modelItem => item.Koolitus.Id)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ApplicationUserId)
+            @Html.DisplayFor(modelItem => item.Koolitus.Keelekursus.Nimetus)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Nimi)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Staatus)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @Html.ActionLink(
+                "Vaheta staatus",         // текст кнопки
+                "VahetaStaatus",          // Action
+                new { id = item.Id },        // параметр
+                new { @class = "btn btn-sm btn-primary" } // CSS
+            )
         </td>
     </tr>
 }
