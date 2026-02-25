@@ -50,17 +50,40 @@ namespace Keeltekooli.Controllers
 
         // GET: Koolitus/Details/5
         public ActionResult Details(int? id)
-        {
-            if (id == null)
+        {// Берём все регистрации со связанными курсами и пользователями
+            var registreerimisedQuery = db.Registreerimine
+                .Include(r => r.Koolitus.Keelekursus) // чтобы можно было брать название курса
+                .Include(r => r.User);
+            if (id.HasValue)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                registreerimisedQuery = registreerimisedQuery
+                    .Where(r => r.Koolitus.KeelekursusId == id.Value);
+
+                var keelekursus = db.Keelekursus.FirstOrDefault(k => k.Id == id.Value);
+                if (keelekursus != null)
+                {
+                    ViewBag.p = keelekursus.Nimetus + " Koolitused";
+                }
             }
-            Koolitus koolitus = db.Koolitus.Find(id);
-            if (koolitus == null)
+            else
             {
-                return HttpNotFound();
+                ViewBag.p = "Kõik koolitused";
             }
-            return View(koolitus);
+
+            // Преобразуем в ViewModel для view
+            var registreerimised = registreerimisedQuery
+                .Select(r => new RegistreerimineViewModel
+                {
+                    Id = r.Id,
+                    KoolitusId = r.KoolitusId,
+                    Koolitus = r.Koolitus,
+                    Nimi = r.User.UserName,
+                    Email = r.User.Email,
+                    Staatus = r.Staatus
+                })
+                .ToList();
+
+            return View(registreerimised);
         }
 
         // GET: Koolitus/Create

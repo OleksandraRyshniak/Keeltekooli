@@ -1,66 +1,44 @@
-﻿@model Keeltekooli.Models.Koolitus
+﻿@model IEnumerable<Keeltekooli.Models.RegistreerimineViewModel>
 
 @{
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<h2>@ViewBag.p</h2>
 
-<div>
-    <h4>Koolitus</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Keelekursus.Nimetus)
-        </dt>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Koolitus.Id)
+        </th>
+        <th>
+            Kursus
+        </th>
+        <th>
+            Nimi
+        </th>
+        <th>
+            Email
+        </th>
+        <th>Status</th>
+    </tr>
 
-        <dd>
-            @Html.DisplayFor(model => model.Keelekursus.Nimetus)
-        </dd>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Koolitus.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Koolitus.Keelekursus.Nimetus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nimi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Opetaja.Nimi)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Opetaja.Nimi)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.AlgusKuupaev)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.AlgusKuupaev)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.LoppKuupaev)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.LoppKuupaev)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Hind)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Hind)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.MaxOsalejaid)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.MaxOsalejaid)
-        </dd>
-
-    </dl>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+        </tr>
+    }
+</table>

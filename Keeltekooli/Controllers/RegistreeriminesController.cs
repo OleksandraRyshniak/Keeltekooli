@@ -22,9 +22,10 @@ namespace Keeltekooli.Models
         {
 
             var registreerimised = db.Registreerimine
+                .Where(r => r.Staatus == "Vaatamisel")
                 .Include(r => r.Koolitus.Keelekursus)
                 .Include(r => r.User)
-                .Where(r => r.Staatus == "Vaatamisel")   
+                .Where(r => r.Staatus == "Vaatamisel")
                 .Select(r => new RegistreerimineViewModel
                 {
                     Id = r.Id,
@@ -35,7 +36,7 @@ namespace Keeltekooli.Models
                     Staatus = r.Staatus,
                 })
                 .ToList();
-
+            ViewBag.VaatamiselCount = registreerimised;
             return View(registreerimised);
         }
 
