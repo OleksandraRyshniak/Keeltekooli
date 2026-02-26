@@ -257,7 +257,7 @@ namespace Keeltekooli.Models
                 WebMail.SmtpPort = 587;
                 WebMail.EnableSsl = true;
                 WebMail.UserName = "oleksandraryshniak@gmail.com";
-                WebMail.Password = "";
+                WebMail.Password = "pqnz htji ijij xvpb";
                 WebMail.From = "oleksandraryshniak@gmail.com";
 
                 string sisu = onkutse
