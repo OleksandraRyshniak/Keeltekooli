@@ -20,12 +20,14 @@
                 <ul class="navbar-nav flex-grow-1">
 
                     <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Keele kursus", "Index", "Keelekursus", new { area = "" }, new { @class = "nav-link" })</li>
+
                     @if (!User.IsInRole("Opetaja"))
+
                     {
-                    <li>@Html.ActionLink("Õpetaja", "Index", "Opetajas", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Keele kursus", "Index", "Keelekursus", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Õpetaja", "Index", "Opetajas", new { area = "" }, new { @class = "nav-link" })</li>
                     }
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
 
                     @if (User.IsInRole("Opetaja"))
                     {
@@ -35,10 +37,11 @@
                     {
                         <li>@Html.ActionLink("Koolitused", "Index", "Koolitus", new { area = "" }, new { @class = "nav-link" })</li>
                     }
-                   @if (User.IsInRole("Opilane"))
+                    @if (User.IsInRole("Opilane"))
                     {
-                       <li>@Html.ActionLink("Minu Koolitused", "Minukool", "Koolitus", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Minu Koolitused", "Minukool", "Koolitus", new { area = "" }, new { @class = "nav-link" })</li>
                     }
+                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                 </ul>
                  @Html.Partial("_LoginPartial")
             </div>

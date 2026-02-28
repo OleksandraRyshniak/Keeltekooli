@@ -3,35 +3,99 @@
 @{
     ViewBag.Title = "Keelekursused";
 }
+<h2 class="mb-4">Keelekursused</h2>
 
-<h2>Index</h2>
 @if (User.IsInRole("Admin"))
 {
-<p>
-    @Html.ActionLink("Lisa Kursus", "Create")
-</p>}
-<table class="table">
+    <p>
+        @Html.ActionLink("Lisa Kursus", "Create", null,
+            new { @class = "btn btn-primary mb-3" })
+    </p>
+}
+
+<div class="row">
     @foreach (var item in Model)
     {
-        <tr>
-            <td>@Html.DisplayFor(m => item.Nimetus)</td>
-            <td>@Html.DisplayFor(m => item.Keel)</td>
-            <td>@Html.DisplayFor(m => item.Tase)</td>
+        var flags = new Dictionary<string, string>
+{
+        {"Inglise", Url.Content("~/images/flags/inglise.png")},
+        {"Saksa", Url.Content("~/images/flags/saksa.png")},
+        {"Eesti", Url.Content("~/images/flags/est.png")},
+        {"Prantsuse", Url.Content("~/images/flags/franch.png")},
+        {"Hispaania", Url.Content("~/images/flags/spain.png")}
+    };
 
+        string flagSrc;
+        if (!flags.TryGetValue(item.Keel, out flagSrc))
+        {
+            flagSrc = Url.Content("~/images/flags/default.png");
+        }
 
-            <td>
-                @Html.ActionLink("Koolitused", "Index", "Koolitus",
-                    new { keelekursusId = item.Id },
-                    new { @class = "btn btn-outline-dark btn-sm" })
+        string bgColor;
+        switch (item.Tase)
+        {
+            case "A2":
+                bgColor = "lightgreen";
+                break;
+            case "B1":
+                bgColor = "green";
+                break;
+            case "B2":
+                bgColor = "yellow";
+                break;
+            case "C1":
+                bgColor = "lightcoral";
+                break;
+            default:
+                bgColor = "red";
+                break;
+        }
 
-                @if (User.IsInRole("Admin"))
-                {
-                    @: |
-                    @Html.ActionLink("Muuda", "Edit", new { id = item.Id })
-                    @: |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                }
-            </td>
-        </tr>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        @item.Nimetus
+                        <img src="@flagSrc"
+                             alt="@item.Keel"
+                             style="width:20px; height:16px;"
+                             class="ms-2" />
+                    </h5>
+
+                    <p class="card-text">
+                        <strong>Keel:</strong> @item.Keel <br />
+
+                        <strong>Tase:</strong>
+                        <span style="display:inline-block;
+                                 padding:2px 6px;
+                                 background-color:@bgColor;
+                                 border-radius:4px;">
+                            @item.Tase
+                        </span>
+                    </p>
+
+                </div>
+
+                <div class="card-footer bg-white border-0">
+
+                    @Html.ActionLink("Koolitused", "Index", "Koolitus",
+                        new { keelekursusId = item.Id },
+                        new { @class = "btn btn-outline-dark btn-sm w-100 mb-2" })
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        @Html.ActionLink("Muuda", "Edit",
+                            new { id = item.Id },
+                            new { @class = "btn btn-warning btn-sm w-100 mb-2" })
+
+                        @Html.ActionLink("Delete", "Delete",
+                            new { id = item.Id },
+                            new { @class = "btn btn-danger btn-sm w-100" })
+                    }
+
+                </div>
+            </div>
+        </div>
     }
-</table>
+</div>

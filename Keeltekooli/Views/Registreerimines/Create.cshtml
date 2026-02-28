@@ -5,19 +5,21 @@
     ViewBag.Title = "Registreerimine";
 }
 
-<h2>Registreerimine</h2>
+<h2 class="mb-4">Registreerimine</h2>
 
 @if (ViewBag.Koolitus != null)
 {
-    <div>
-        <strong>Koolitus:</strong> @ViewBag.Koolitus.Keelekursus.Nimetus (@ViewBag.Koolitus.AlgusKuupaev.ToString("yyyy-MM-dd"))
+    <div class="alert alert-info">
+        <h3><strong>Koolitus:</strong> </h3>
+        @ViewBag.Koolitus.Keelekursus.Nimetus
+        (@ViewBag.Koolitus.AlgusKuupaev.ToString("yyyy.MM.dd") - @ViewBag.Koolitus.LoppKuupaev.ToString("yyyy.MM.dd"))
     </div>
 }
 else
 {
-    <div>
-        <strong>Koolitus:</strong> -
-    </div>
+    <div class="alert alert-warning">
+        <h2><strong>Sa oled juba registreeritud sellele kursusele. </strong> </h2>
+</div>
 }
 
 @using (Html.BeginForm("Create", "Registreerimines", FormMethod.Post))
@@ -26,29 +28,31 @@ else
 
     @Html.HiddenFor(m => m.KoolitusId)
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.Nimi, new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(m => m.Nimi, new { htmlAttributes = new { @class = "form-control" } })
+    <div class="card shadow-sm p-4">
+
+        <div class="mb-3">
+            @Html.LabelFor(m => m.Nimi, "Nimi")
+            @Html.EditorFor(m => m.Nimi,
+                new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(m => m.Nimi, "", new { @class = "text-danger" })
         </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control" } })
+
+        <div class="mb-3">
+            @Html.LabelFor(m => m.Email, "Email")
+            @Html.EditorFor(m => m.Email,
+                new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
         </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Registreeru" class="btn btn-default" />
-            </div>
+        <div class="text-end">
+            <input type="submit"
+                   value="Registreeru"
+                   class="btn btn-primary" />
         </div>
-    </div>
 
+    </div>
+}
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-}
 }

@@ -18,14 +18,37 @@ namespace Keeltekooli.Models
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Registreerimines
-        public ActionResult Index()
+        public ActionResult Index(int? koolitus)
         {
 
-            var registreerimised = db.Registreerimine
-                .Where(r => r.Staatus == "Vaatamisel")
-                .Include(r => r.Koolitus.Keelekursus)
-                .Include(r => r.User)
-                .Where(r => r.Staatus == "Vaatamisel")
+            var query = db.Registreerimine
+    .Include(r => r.Koolitus.Keelekursus)
+    .Include(r => r.User)
+    .Where(r => r.Staatus == "Vaatamisel");
+
+            if (koolitus != null)
+            {
+                query = query.Where(r => r.KoolitusId == koolitus);
+
+                var koolitusObj = db.Koolitus
+                    .Include(k => k.Keelekursus)
+                    .FirstOrDefault(k => k.Id == koolitus);
+
+                if (koolitusObj != null)
+                {
+                    ViewBag.KoolitusNimi = koolitusObj.Keelekursus.Nimetus;
+                }
+                else
+                {
+                    ViewBag.KoolitusNimi = "Tundmatu koolitus";
+                }
+            }
+            else
+            {
+                ViewBag.KoolitusNimi = "Kõik koolitused";
+            }
+
+            var registreerimised = query
                 .Select(r => new RegistreerimineViewModel
                 {
                     Id = r.Id,
@@ -33,10 +56,12 @@ namespace Keeltekooli.Models
                     Koolitus = r.Koolitus,
                     Nimi = r.User.UserName,
                     Email = r.User.Email,
-                    Staatus = r.Staatus,
+                    Staatus = r.Staatus
                 })
                 .ToList();
-            ViewBag.VaatamiselCount = registreerimised;
+
+            ViewBag.VaatamiselCount = registreerimised.Count;
+
             return View(registreerimised);
         }
 
@@ -151,7 +176,7 @@ namespace Keeltekooli.Models
             db.Registreerimine.Add(registreerimine);
             db.SaveChanges();
 
-            SaadaEmail(user, koolitus, true); // true — подтверждение участия
+            SaadaEmail(user, koolitus, true, koolitus.Opetaja); // true — подтверждение участия
 
             return RedirectToAction("Tanan" , new { id = registreerimine.Id });
         }
@@ -247,17 +272,17 @@ namespace Keeltekooli.Models
         }
         //https://myaccount.google.com/apppasswords
 
-        private void SaadaEmail(ApplicationUser user, Koolitus koolitus, bool onkutse)
+        private void SaadaEmail(ApplicationUser user, Koolitus koolitus, bool onkutse, Opetaja opetaja)
         {
             try
             {
-                //string failiTee = Path.Combine(Server.MapPath("~/Images/"), koolitus.Pilt ?? "default.jpg");
+                string failiTee = Path.Combine(Server.MapPath("~/Images/"), opetaja.FotoPath ?? "languagebridge.png");
 
                 WebMail.SmtpServer = "smtp.gmail.com";
                 WebMail.SmtpPort = 587;
                 WebMail.EnableSsl = true;
                 WebMail.UserName = "oleksandraryshniak@gmail.com";
-                WebMail.Password = "pqnz htji ijij xvpb";
+                WebMail.Password = "jdka ekmw edgc ojqs";
                 WebMail.From = "oleksandraryshniak@gmail.com";
 
                 string sisu = onkutse
@@ -266,10 +291,10 @@ namespace Keeltekooli.Models
 
                 WebMail.Send(
                     to: user.Email,
-                    subject: $"Kinnitus registreerumisest kursusele {koolitus.Keelekursus}",
+                    subject: $"Kinnitus registreerumisest kursusele {koolitus.Keelekursus.Nimetus}",
                     body: sisu,
-                    isBodyHtml: true
-                  //  filesToAttach: new string[] { failiTee }
+                    isBodyHtml: true,
+                   filesToAttach: new string[] { failiTee }
                 );
             }
             catch (Exception ex)

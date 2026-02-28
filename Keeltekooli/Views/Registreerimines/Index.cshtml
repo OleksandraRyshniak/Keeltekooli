@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<Keeltekooli.Models.RegistreerimineViewModel>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = ViewBag.KoolitusNimi;
 }
 
-<h2>Index</h2>
+<h2>@ViewBag.KoolitusNimi</h2>
 
 <table class="table">
     <tr>
@@ -23,32 +23,62 @@
         <th>Status</th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Koolitus.Id)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Koolitus.Keelekursus.Nimetus)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Nimi)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Staatus)
-        </td>
-        <td>
-            @Html.ActionLink(
-                "Vaheta staatus",         // текст кнопки
-                "VahetaStaatus",          // Action
-                new { id = item.Id },        // параметр
-                new { @class = "btn btn-sm btn-primary" } // CSS
-            )
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Koolitus.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Koolitus.Keelekursus.Nimetus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nimi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Staatus)
+            </td>
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    @Html.ActionLink(
+                             "Vaheta staatus",         // текст кнопки
+                             "VahetaStaatus",          // Action
+                             new { id = item.Id },        // параметр
+                             new { @class = "btn btn-sm btn-primary" } // CSS
+                         )
+                </td>
+            }
+            @if (User.IsInRole("Opetaja"))
+            {
+                <td>
+                    @Html.ActionLink(
+             "Kirjutama",
+             "SendEmail",
+             "SendEmail",
+             new { id = item.Id },
+             new { @class = "btn btn-sm btn-success" } // CSS
+         )
+                </td>
+            }
+
+        </tr>
+    }
 
 </table>
+
+@if (User.IsInRole("Opetaja"))
+{
+    <p>
+        @Html.ActionLink(
+            "Saada kõigile",
+            "SendEmailAll",
+            "SendEmail",
+            null,
+            new { @class = "btn btn-danger" }
+        )
+    </p>
+}

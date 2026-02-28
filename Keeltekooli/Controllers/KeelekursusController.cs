@@ -15,10 +15,11 @@ namespace Keeltekooli.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Keelekursus
-        [AllowAnonymous]
+        
         public ActionResult Index()
         {
-            return View(db.Keelekursus.ToList());
+            var model = db.Keelekursus.ToList();  
+            return View(model);
         }
 
         // GET: Keelekursus/Details/5

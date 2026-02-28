@@ -3,50 +3,87 @@
 @{
     ViewBag.Title = "Minu koolitus";
 }
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Keelekursus.Nimetus)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Opetaja.Nimi)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AlgusKuupaev)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LoppKuupaev)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Hind)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.MaxOsalejaid)
-        </th>
-        <th></th>
-    </tr>
 
+<div class="row">
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Keelekursus.Nimetus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Opetaja.Nimi)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AlgusKuupaev)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LoppKuupaev)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Hind)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaxOsalejaid)
-            </td>
-        </tr>
+        var today = DateTime.Today;
+        bool isActive = item.AlgusKuupaev <= today && today <= item.LoppKuupaev;
+
+        var flags = new Dictionary<string, string>
+{
+            {"Inglise", Url.Content("~/images/flags/inglise.png")},
+            {"Saksa", Url.Content("~/images/flags/saksa.png")},
+            {"Eesti", Url.Content("~/images/flags/est.png")},
+            {"Prantsuse", Url.Content("~/images/flags/franch.png")},
+            {"Hispaanis", Url.Content("~/images/flags/spain.png")}
+        };
+
+        string flagSrc;
+        if (!flags.TryGetValue(item.Keelekursus.Keel, out flagSrc))
+        {
+            flagSrc = Url.Content("~/images/flags/default.png");
+        }
+
+        string bgColor;
+        switch (item.Keelekursus.Tase)
+        {
+            case "A2":
+                bgColor = "lightgreen";
+                break;
+            case "B1":
+                bgColor = "green";
+                break;
+            case "B2":
+                bgColor = "yellow";
+                break;
+            case "C1":
+                bgColor = "lightcoral";
+                break;
+            default:
+                bgColor = "red";
+                break;
+        }
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        @item.Keelekursus.Nimetus
+                        <img src="@flagSrc" alt="@item.Keelekursus.Keel" style="width:20px; height:16px;" class="ms-2" />
+                        @if (isActive)
+                        {
+                            <span class="badge bg-success ms-2">Aktiivne</span>
+                        }
+                        else if (today < item.AlgusKuupaev)
+                        {
+                            <span class="badge bg-info ms-2">Peagi algav</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary ms-2">Lõppenud</span>
+                        }
+                    </h5>
+
+                    <p class="card-text">
+                        <strong>Õpetaja:</strong> @item.Opetaja.Nimi <br />
+                        <strong>Tase:</strong>
+                        <span style="display:inline-block; padding:2px 6px; background-color:@bgColor; border-radius:4px;">
+                            @item.Keelekursus.Tase
+                        </span>
+                        <br />
+                        <strong>Algus:</strong> @item.AlgusKuupaev.ToShortDateString() <br />
+                        <strong>Lõpp:</strong> @item.LoppKuupaev.ToShortDateString() <br />
+                        <strong>Hind:</strong> @item.Hind € <br />
+                        <strong>Max osalejaid:</strong> @item.MaxOsalejaid
+                    </p>
+                </div>
+
+                <div class="card-footer bg-white border-0">
+                    @Html.ActionLink("Osalejad", "Index", "Registreerimines",
+                        new { koolitus = item.Id },
+                        new { @class = "btn btn-outline-dark btn-sm w-100" })
+                </div>
+            </div>
+        </div>
     }
-    </table>
+</div>

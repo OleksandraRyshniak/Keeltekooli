@@ -4,11 +4,47 @@
     ViewBag.Title = "Tänan registreerumise eest!";
 }
 
-<h2>Tänan registreerumise eest!</h2>
+<div class="container mt-5">
 
-<p>Olete registreeritud kursusele: <strong>@ViewBag.Kursus</strong></p>
-<p>Keelekursus: <strong>@ViewBag.Keelekursus</strong></p>
-<p>Õpetaja: <strong>@ViewBag.Opetaja</strong></p>
-<p>Teie registreerimise staatus: <strong>@ViewBag.Staatus</strong></p>
+    <div class="card shadow-sm p-4 text-center">
 
-<p>Ootame teid kursusel! Kontrollige oma e-posti, et näha kinnitust.</p>
+        <div class="alert alert-success">
+            <h3> Registreerimine õnnestus!</h3>
+        </div>
+
+        <h4 class="mb-4">Tänan registreerumise eest!</h4>
+
+        <p>
+            Olete registreeritud kursusele:
+            <strong>@ViewBag.Kursus</strong>
+        </p>
+
+        <p>
+            Keelekursus:
+            <strong>@ViewBag.Keelekursus</strong>
+        </p>
+
+        <p>
+            Õpetaja:
+            <strong>@ViewBag.Opetaja</strong>
+        </p>
+
+        <p>
+            Teie registreerimise staatus:
+            <span class="badge bg-primary">
+                @ViewBag.Staatus
+            </span>
+        </p>
+
+        <hr />
+
+        <p class="text-muted">
+            Ootame teid kursusel! Kontrollige oma e-posti, et näha kinnitust.
+        </p>
+
+        <a href="/" class="btn btn-success mt-3">
+             Tagasi avalehele
+        </a>
+
+    </div>
+</div>
