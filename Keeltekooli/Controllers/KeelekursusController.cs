@@ -15,11 +15,30 @@ namespace Keeltekooli.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Keelekursus
-        
-        public ActionResult Index()
+
+        public ActionResult Index(string keel, string tase)
         {
-            var model = db.Keelekursus.ToList();  
-            return View(model);
+            var kursused = db.Keelekursus.AsQueryable();
+
+            if (!string.IsNullOrEmpty(keel))
+            {
+                kursused = kursused.Where(k => k.Keel == keel);
+            }
+
+            if (!string.IsNullOrEmpty(tase))
+            {
+                kursused = kursused.Where(k => k.Tase == tase);
+            }
+
+            ViewBag.Keel = new SelectList(db.Keelekursus
+                .Select(k => k.Keel)
+                .Distinct());
+
+            ViewBag.Tase = new SelectList(db.Keelekursus
+                .Select(k => k.Tase)
+                .Distinct());
+
+            return View(kursused.ToList());
         }
 
         // GET: Keelekursus/Details/5

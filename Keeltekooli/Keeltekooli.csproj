@@ -255,6 +255,7 @@
     <Content Include="Images\flags\inglise.png" />
     <Content Include="Images\flags\saksa.png" />
     <Content Include="Images\flags\spain.png" />
+    <Content Include="Images\languagebridge.png" />
     <Content Include="Images\mari.jpg" />
     <Content Include="Images\ol.png" />
     <Content Include="Scripts\bootstrap.bundle.js" />

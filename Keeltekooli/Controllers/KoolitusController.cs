@@ -20,12 +20,18 @@ namespace Keeltekooli.Controllers
         // GET: Koolitus
         public ActionResult Index(int? keelekursusId)
         {
+            var today = DateTime.Today;
             var koolitus = db.Koolitus
                 .Include(k => k.Keelekursus)
                 .Include(k => k.Opetaja)
                 .Where(k =>
                     db.Registreerimine.Count(r => r.KoolitusId == k.Id)
                     < k.MaxOsalejaid);
+            if (!User.IsInRole("Admin"))
+            {
+                koolitus = koolitus
+                    .Where(k => !(k.AlgusKuupaev <= today && today <= k.LoppKuupaev));
+            }
 
             if (keelekursusId != null)
             {

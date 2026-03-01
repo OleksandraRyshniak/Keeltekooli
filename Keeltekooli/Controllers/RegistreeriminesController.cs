@@ -22,9 +22,14 @@ namespace Keeltekooli.Models
         {
 
             var query = db.Registreerimine
-    .Include(r => r.Koolitus.Keelekursus)
-    .Include(r => r.User)
-    .Where(r => r.Staatus == "Vaatamisel");
+            .Include(r => r.Koolitus.Keelekursus)
+            .Include(r => r.User);
+            // Если пользователь Учитель
+            if (User.IsInRole("Opetaja"))
+            {
+                query = query.Where(r => r.Staatus == "Kinnitatud");
+            }
+            else{}
 
             if (koolitus != null)
             {
@@ -145,13 +150,19 @@ namespace Keeltekooli.Models
             {
                 user = new ApplicationUser
                 {
-                    UserName = model.Email,
+                    UserName = model.Nimi,   // имя сохраняем сюда
                     Email = model.Email
                 };
 
                 db.Users.Add(user);
-                db.SaveChanges();
             }
+            else
+            {
+                // если пользователь уже есть — обновляем имя
+                user.UserName = model.Nimi;
+            }
+
+            db.SaveChanges();
 
             // *** Проверяем, зарегистрирован ли пользователь уже на этот курс ***
             bool alreadyRegistered = db.Registreerimine.Any(r =>
@@ -176,7 +187,7 @@ namespace Keeltekooli.Models
             db.Registreerimine.Add(registreerimine);
             db.SaveChanges();
 
-            SaadaEmail(user, koolitus, true, koolitus.Opetaja); // true — подтверждение участия
+            SaadaEmail(user, koolitus, true, "languagebridge.png"); // true — подтверждение участия
 
             return RedirectToAction("Tanan" , new { id = registreerimine.Id });
         }
@@ -199,9 +210,6 @@ namespace Keeltekooli.Models
             return View(registreerimine);
         }
 
-        // POST: Registreerimines/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,KoolitusId,ApplicationUserId,Staatus")] Registreerimine registreerimine)
@@ -210,7 +218,7 @@ namespace Keeltekooli.Models
             {
                 db.Entry(registreerimine).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { koolitus = registreerimine.KoolitusId });
             }
             ViewBag.KoolitusId = new SelectList(db.Koolitus, "Id", "Id", registreerimine.KoolitusId);
             return View(registreerimine);
@@ -272,17 +280,17 @@ namespace Keeltekooli.Models
         }
         //https://myaccount.google.com/apppasswords
 
-        private void SaadaEmail(ApplicationUser user, Koolitus koolitus, bool onkutse, Opetaja opetaja)
+        private void SaadaEmail(ApplicationUser user, Koolitus koolitus, bool onkutse, string fotoPath)
         {
             try
             {
-                string failiTee = Path.Combine(Server.MapPath("~/Images/"), opetaja.FotoPath ?? "languagebridge.png");
+                string failiTee = Path.Combine(Server.MapPath("~/Images/"), fotoPath);
 
                 WebMail.SmtpServer = "smtp.gmail.com";
                 WebMail.SmtpPort = 587;
                 WebMail.EnableSsl = true;
                 WebMail.UserName = "oleksandraryshniak@gmail.com";
-                WebMail.Password = "jdka ekmw edgc ojqs";
+                WebMail.Password = "ibzp beef fecd umby";
                 WebMail.From = "oleksandraryshniak@gmail.com";
 
                 string sisu = onkutse
@@ -294,7 +302,7 @@ namespace Keeltekooli.Models
                     subject: $"Kinnitus registreerumisest kursusele {koolitus.Keelekursus.Nimetus}",
                     body: sisu,
                     isBodyHtml: true,
-                   filesToAttach: new string[] { failiTee }
+                    filesToAttach: new string[] { failiTee }
                 );
             }
             catch (Exception ex)
@@ -303,17 +311,17 @@ namespace Keeltekooli.Models
             }
         }
 
-        private void SaadaEmail_ok(ApplicationUser user, Koolitus koolitus, bool onkutse)
+        private void SaadaEmail_ok(ApplicationUser user, Koolitus koolitus, bool onkutse, string fotoPath)
         {
             try
             {
-                //string failiTee = Path.Combine(Server.MapPath("~/Images/"), koolitus.Pilt ?? "default.jpg");
+                string failiTee = Path.Combine(Server.MapPath("~/Images/"), fotoPath);
 
                 WebMail.SmtpServer = "smtp.gmail.com";
                 WebMail.SmtpPort = 587;
                 WebMail.EnableSsl = true;
                 WebMail.UserName = "oleksandraryshniak@gmail.com";
-                WebMail.Password = "";
+                WebMail.Password = "ibzp beef fecd umby";
                 WebMail.From = "oleksandraryshniak@gmail.com";
 
                 string sisu = onkutse
@@ -324,8 +332,8 @@ namespace Keeltekooli.Models
                     to: user.Email,
                     subject: $"Kinnitus registreerumisest kursusele {koolitus.Keelekursus}",
                     body: sisu,
-                    isBodyHtml: true
-                //  filesToAttach: new string[] { failiTee }
+                    isBodyHtml: true,
+                 filesToAttach: new string[] { failiTee }
                 );
             }
             catch (Exception ex)
@@ -361,10 +369,11 @@ namespace Keeltekooli.Models
             // Логика смены статуса
             if (registreerimine.Staatus == "Vaatamisel")
                 registreerimine.Staatus = "Kinnitatud";
-            SaadaEmail_ok(user, koolitus, true);
+
+            SaadaEmail_ok(user, koolitus, true, "languagebridge.png");
             db.SaveChanges();
 
-            return RedirectToAction("Index"); 
+            return RedirectToAction("Index", new { koolitus = registreerimine.KoolitusId });
         }
     }
 }

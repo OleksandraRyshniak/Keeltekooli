@@ -41,7 +41,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Staatus)
             </td>
-            @if (User.IsInRole("Admin"))
+            @if (User.IsInRole("Admin") && item.Staatus != "Kinnitatud")
             {
                 <td>
                     @Html.ActionLink(

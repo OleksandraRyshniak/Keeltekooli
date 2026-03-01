@@ -1,11 +1,6 @@
 ﻿@using Microsoft.AspNet.Identity
 
 
-@if (User.IsInRole("Admin"))
-    {
-        <li>@Html.ActionLink("📩", "Index", "Registreerimines")</li>
-    }
-
 @if (Request.IsAuthenticated)
 {
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))

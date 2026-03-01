@@ -58,7 +58,7 @@ namespace Keeltekooli.Controllers
                 WebMail.SmtpPort = 587;
                 WebMail.EnableSsl = true;
                 WebMail.UserName = "oleksandraryshniak@gmail.com";
-                WebMail.Password = "jdka ekmw edgc ojqs"; // ← настоящий App Password
+                WebMail.Password = "qppv odbp qvjs gvuc"; // ← настоящий App Password
                 WebMail.From = "oleksandraryshniak@gmail.com";
 
                 WebMail.Send(
@@ -109,7 +109,7 @@ namespace Keeltekooli.Controllers
                 WebMail.SmtpPort = 587;
                 WebMail.EnableSsl = true;
                 WebMail.UserName = "oleksandraryshniak@gmail.com";
-                WebMail.Password = "jdka ekmw edgc ojqs";
+                WebMail.Password = "qppv odbp qvjs gvuc";
                 WebMail.From = "oleksandraryshniak@gmail.com";
 
                 // Отправка одним письмом через BCC
