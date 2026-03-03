@@ -293,9 +293,15 @@ namespace Keeltekooli.Models
                 WebMail.Password = "ibzp beef fecd umby";
                 WebMail.From = "oleksandraryshniak@gmail.com";
 
-                string sisu = onkutse
-                    ? $"Tere, {user.UserName}!<br/><br/>Sinu registreerumine kursusele <b>{koolitus.Keelekursus.Nimetus}</b> on salvestatud. Ootame sind väga!<br/><br/>Kohtumiseni!"
-                    : $"Tere, {user.UserName}!<br/><br/>Sinu registreerumine kursusele <b>{koolitus.Keelekursus.Nimetus}</b> on salvestatud. Kahju, et sa ei tule!<br/><br/>Kõike head!";
+                                   ? $"Tere, {user.UserName}!<br/><br/>" +
+$"Täname registreerimise eest kursusele <b>{koolitus.Keelekursus.Nimetus}</b>.<br/>" +
+$"Koht kinnitatakse pärast makse sooritamist.<br/>" +
+$"Pärast makse laekumist saadame kinnituse e-kirja.<br/><br/>" +
+$"Aitäh ja ootame sind õppima!"
+:
+$"Tere, {user.UserName}!<br/><br/>" +
+$"Sinu registreerumine kursusele <b>{koolitus.Keelekursus.Nimetus}</b> on salvestatud.<br/>" +
+$"Ootame sind väga!<br/><br/>Kohtumiseni!";
 
                 WebMail.Send(
                     to: user.Email,
@@ -325,9 +331,12 @@ namespace Keeltekooli.Models
                 WebMail.From = "oleksandraryshniak@gmail.com";
 
                 string sisu = onkutse
-                    ? $"Tere, {user.UserName}!<br/><br/>Sinu registreerumine kursusele <b>{koolitus.Keelekursus.Nimetus}</b> on salvestatud. Ootame sind väga!<br/><br/>Kohtumiseni!"
+                    ? $"Tere, {user.UserName}!<br/><br/>" +
+$"Täname! Oleme saanud teie makse kursuse <b>{koolitus.Keelekursus.Nimetus}</b> eest.<br/>" +
+$"Teie koht kursusel on kinnitatud.<br/><br/>" +
+$"Ootame teid õppetundides ja soovime edu õppimisel!<br/><br/>" +
+$"Kohtumiseni!"
                     : $"Tere, {user.UserName}!<br/><br/>Sinu registreerumine kursusele <b>{koolitus.Keelekursus.Nimetus}</b> on salvestatud. Kahju, et sa ei tule!<br/><br/>Kõike head!";
-
                 WebMail.Send(
                     to: user.Email,
                     subject: $"Kinnitus registreerumisest kursusele {koolitus.Keelekursus}",
