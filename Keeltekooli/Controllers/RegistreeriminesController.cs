@@ -293,7 +293,7 @@ namespace Keeltekooli.Models
                 WebMail.Password = "ibzp beef fecd umby";
                 WebMail.From = "oleksandraryshniak@gmail.com";
 
-                                   ? $"Tere, {user.UserName}!<br/><br/>" +
+                  string sisu = onkutse                 ? $"Tere, {user.UserName}!<br/><br/>" +
 $"Täname registreerimise eest kursusele <b>{koolitus.Keelekursus.Nimetus}</b>.<br/>" +
 $"Koht kinnitatakse pärast makse sooritamist.<br/>" +
 $"Pärast makse laekumist saadame kinnituse e-kirja.<br/><br/>" +
