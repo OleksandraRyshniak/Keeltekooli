@@ -1,19 +1,70 @@
-﻿@{
-    ViewBag.Title = "Contact";
+@{
+    ViewBag.Title = "Kontakt";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
 
-    <address>
-        One Microsoft Way<br />
-        Redmond, WA 98052-6399<br />
-        <abbr title="Phone">P:</abbr>
-        425.555.0100
-    </address>
+<main class="container py-5" aria-labelledby="title">
 
-    <address>
-        <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-        <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-    </address>
+    <div class="text-center mb-5">
+        <h1 id="title" class="fw-bold">📬 Kontakt</h1>
+        <p class="text-muted">Võta ühendust meie kooliga – LanguageBridge</p>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- School Info -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body text-center">
+                    <h5 class="card-title">🏫 LanguageBridge</h5>
+                    <p class="card-text text-muted">
+                        Keelekool, mis aitab sul avada uksi rahvusvahelisse maailma.
+                    </p>
+
+                    <address class="mt-3">
+                        <strong>Aadress</strong><br />
+                        One Microsoft Way<br />
+                        Redmond, WA 98052-6399<br />
+                    </address>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body text-center">
+                    <h5>📧 Tugi</h5>
+
+                    <p class="mt-3">
+                        <strong>Support:</strong><br />
+                        <a class="text-decoration-none" href="mailto:Support@languagebridge.com">
+                            Support@languagebridge.com
+                        </a>
+                    </p>
+
+                    <p>
+                        <strong>Turundus:</strong><br />
+                        <a class="text-decoration-none" href="mailto:Marketing@languagebridge.com">
+                            Marketing@languagebridge.com
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h5>📞 Kontakt</h5>
+
+                    <p class="mt-3 mb-1">Telefon</p>
+                    <h4>425.555.0100</h4>
+
+                    <small class="opacity-75">Tööpäeviti 09:00 – 18:00</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </main>
